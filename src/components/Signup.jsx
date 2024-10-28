@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -11,10 +12,12 @@ import {
   Link,
   FormErrorMessage,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import Layout from './Layout';
+import { authService } from '../services/authServices';
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -28,8 +31,39 @@ const SignupSchema = Yup.object().shape({
 });
 
 export default function Signup() {
+  const navigate = useNavigate();
+  const toast = useToast();
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const boxBgColor = useColorModeValue('white', 'gray.700');
+
+  const handleSignup = async (values, actions) => {
+    try {
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...signupData } = values;
+
+      await authService.signup(signupData);
+
+      toast({
+        title: 'Signup successful',
+        description: 'Please login with your credentials',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      navigate('/login');
+    } catch (error) {
+      toast({
+        title: 'Signup failed',
+        description: error.response?.data?.message || 'Something went wrong',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
@@ -47,12 +81,7 @@ export default function Signup() {
                 confirmPassword: '',
               }}
               validationSchema={SignupSchema}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  actions.setSubmitting(false);
-                }, 1000);
-              }}
+              onSubmit={handleSignup}
             >
               {(props) => (
                 <Form>

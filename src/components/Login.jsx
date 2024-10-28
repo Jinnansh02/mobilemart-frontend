@@ -1,4 +1,8 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setCredentials } from '../store/authSlice';
+import { authService } from '../services/authServices';
 import {
   Box,
   Button,
@@ -11,6 +15,7 @@ import {
   Link,
   FormErrorMessage,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -22,8 +27,36 @@ const LoginSchema = Yup.object().shape({
 });
 
 export default function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useToast();
+
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const boxBgColor = useColorModeValue('white', 'gray.700');
+
+  const handleLogin = async (values, actions) => {
+    try {
+      const data = await authService.login(values);
+      dispatch(setCredentials(data));
+
+      toast({
+        title: 'Login successful',
+        status: 'success',
+        duration: 3000,
+      });
+
+      navigate('/profile');
+    } catch (error) {
+      toast({
+        title: 'Login failed',
+        description: error.response?.data?.message || 'Something went wrong',
+        status: 'error',
+        duration: 3000,
+      });
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
@@ -39,12 +72,7 @@ export default function Login() {
                 password: '',
               }}
               validationSchema={LoginSchema}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  actions.setSubmitting(false);
-                }, 1000);
-              }}
+              onSubmit={handleLogin}
             >
               {(props) => (
                 <Form>
