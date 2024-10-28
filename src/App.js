@@ -9,6 +9,9 @@ import Profile from './components/Profile';
 import CategoryDashboard from './components/admin/CategoryDashboard';
 import ProductDashboard from './components/admin/ProductDashboard';
 import ProductsPage from './components/ProductsPage';
+import ProductDetails from './components/ProductDetails';
+// import 'slick-carousel/slick/slick.css';
+// import 'slick-carousel/slick/slick-theme.css';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />,
+  },
+  {
+    path: '/products/:id',
+    element: <ProductDetails />,
   },
   {
     path: '/products',

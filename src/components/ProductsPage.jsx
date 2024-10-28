@@ -38,14 +38,17 @@ import { FiFilter, FiX, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { apiClient } from '../utils/apiClient.js';
 import Layout from './Layout.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // Wrap Chakra components with motion
 const MotionBox = motion(Box);
 const MotionSimpleGrid = motion(SimpleGrid);
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   return (
     <MotionBox
+      onClick={() => navigate(`/products/${product._id}`)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}

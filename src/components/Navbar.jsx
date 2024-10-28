@@ -25,7 +25,7 @@ const NavLink = (props) => {
   const { children } = props;
   return (
     <Box
-      as="a"
+      as={Link}
       px={2}
       py={1}
       rounded={'md'}
@@ -33,7 +33,7 @@ const NavLink = (props) => {
         textDecoration: 'none',
         bg: useColorModeValue('gray.200', 'gray.700'),
       }}
-      href={'#'}
+      to={children?.toLowerCase()}
     >
       {children}
     </Box>
@@ -67,7 +67,7 @@ export default function Navbar() {
           </Box>
           <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
             {Links.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
+              <NavLink key={link?.toLowerCase()}>{link}</NavLink>
             ))}
           </HStack>
         </HStack>
