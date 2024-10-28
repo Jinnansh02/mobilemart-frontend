@@ -102,6 +102,10 @@ export default function Navbar() {
                   My Orders
                 </MenuItem>
                 <MenuDivider />
+                <MenuItem as={Link} to="/admin/categories">
+                  Admin Dashboard
+                </MenuItem>
+                <MenuDivider />
                 <MenuItem onClick={handleLogout} color="red.500">
                   Logout
                 </MenuItem>

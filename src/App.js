@@ -6,6 +6,9 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
+import CategoryDashboard from './components/admin/CategoryDashboard';
+import ProductDashboard from './components/admin/ProductDashboard';
+import ProductsPage from './components/ProductsPage';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +26,18 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />,
+  },
+  {
+    path: '/products',
+    element: <ProductsPage />,
+  },
+  {
+    path: '/admin/categories',
+    element: <CategoryDashboard />,
+  },
+  {
+    path: '/admin/products',
+    element: <ProductDashboard />,
   },
 ]);
 
