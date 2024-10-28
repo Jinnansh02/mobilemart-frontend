@@ -1,11 +1,7 @@
-'use client';
-
 import {
   Box,
   Flex,
-  Avatar,
   HStack,
-  Text,
   IconButton,
   Button,
   Menu,
@@ -17,8 +13,11 @@ import {
   useColorModeValue,
   Stack,
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
-import { Link } from 'react-router-dom';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { UserCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/authSlice';
 
 const Links = ['Products', 'Contact-Us', 'About-Us'];
 
@@ -43,6 +42,14 @@ const NavLink = (props) => {
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
 
   return (
     <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
@@ -55,7 +62,7 @@ export default function Navbar() {
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems={'center'}>
-          <Box as={Link} to={'/'}>
+          <Box as={Link} to={'/'} fontWeight="bold">
             Mobile Mart
           </Box>
           <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
@@ -65,38 +72,42 @@ export default function Navbar() {
           </HStack>
         </HStack>
         <Flex alignItems={'center'}>
-          <Button
-            as={Link}
-            to={'/login'}
-            variant={'solid'}
-            colorScheme="blue"
-            size={'sm'}
-            mr={4}
-          >
-            Login
-          </Button>
-          {/* <Menu>
-            <MenuButton
-              as={Button}
-              rounded={'full'}
-              variant={'link'}
-              cursor={'pointer'}
-              minW={0}
+          {!isAuthenticated ? (
+            <Button
+              as={Link}
+              to={'/login'}
+              variant={'solid'}
+              colorScheme="blue"
+              size={'sm'}
+              mr={4}
             >
-              <Avatar
-                size={'sm'}
-                src={
-                  'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                }
-              />
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Link 1</MenuItem>
-              <MenuItem>Link 2</MenuItem>
-              <MenuDivider />
-              <MenuItem>Link 3</MenuItem>
-            </MenuList>
-          </Menu> */}
+              Login
+            </Button>
+          ) : (
+            <Menu>
+              <MenuButton
+                as={Button}
+                variant={'ghost'}
+                cursor={'pointer'}
+                minW={0}
+                leftIcon={<UserCircle size={20} />}
+              >
+                {user?.name}
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={Link} to="/profile">
+                  Profile
+                </MenuItem>
+                <MenuItem as={Link} to="/orders">
+                  My Orders
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={handleLogout} color="red.500">
+                  Logout
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          )}
         </Flex>
       </Flex>
 

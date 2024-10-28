@@ -5,6 +5,7 @@ import { store, persistor } from './store/store';
 import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Profile from './components/Profile';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/profile',
+    element: <Profile />,
   },
 ]);
 
