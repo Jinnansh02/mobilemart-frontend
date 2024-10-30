@@ -127,10 +127,10 @@ const ProductsPage = () => {
     search: '',
     category: '',
     minPrice: 0,
-    maxPrice: 1000,
+    maxPrice: 10000,
     inStock: false,
     sortBy: 'name',
-    sortOrder: 'asc',
+    sortOrder: 'desc',
   });
 
   // Responsive drawer
