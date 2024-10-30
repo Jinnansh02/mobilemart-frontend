@@ -33,7 +33,7 @@ const NavLink = (props) => {
         textDecoration: 'none',
         bg: useColorModeValue('gray.200', 'gray.700'),
       }}
-      to={children?.toLowerCase()}
+      to={`/${children?.toLowerCase()}`}
     >
       {children}
     </Box>
