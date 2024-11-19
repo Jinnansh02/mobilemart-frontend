@@ -9,7 +9,7 @@ import CategoryDashboard from './components/admin/CategoryDashboard';
 import ProductDashboard from './components/admin/ProductDashboard';
 import ProductsPage from './components/ProductsPage';
 import ProductDetails from './components/ProductDetails';
-import HomePage from './components/Homepage';
+import HomePage from './components/HomePage';
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
 
