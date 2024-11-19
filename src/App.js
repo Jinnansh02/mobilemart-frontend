@@ -11,6 +11,9 @@ import ProductsPage from './components/ProductsPage';
 import ProductDetails from './components/ProductDetails';
 import HomePage from './components/HomePage';
 import CartPage from './components/CartPage';
+import CheckoutPage from './components/CheckoutPage';
+import OrderSuccessPage from './components/OrderSuccess';
+import OrdersPage from './components/OrdersPage';
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
 
@@ -50,6 +53,18 @@ const router = createBrowserRouter([
   {
     path: '/cart',
     element: <CartPage />,
+  },
+  {
+    path: '/checkout',
+    element: <CheckoutPage />,
+  },
+  {
+    path: '/order-success',
+    element: <OrderSuccessPage />,
+  },
+  {
+    path: '/orders',
+    element: <OrdersPage />,
   },
 ]);
 
