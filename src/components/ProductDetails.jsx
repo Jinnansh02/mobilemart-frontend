@@ -1,6 +1,7 @@
 // src/components/shop/ProductDetails.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Box,
   Container,
@@ -31,14 +32,10 @@ import {
 } from '@chakra-ui/react';
 import { ChevronRightIcon, CheckIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
-import Slider from 'react-slick';
-import { apiClient } from '../utils/apiClient.js';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
-import Layout from './Layout.jsx';
-
-// Import slick carousel css in your index.html or App.js
-// <link rel="stylesheet" type="text/css" charset="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-// <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
+import { addToCart } from '../store/authSlice';
+import { apiClient } from '../utils/apiClient';
+import Layout from './Layout';
 
 const MotionBox = motion(Box);
 
@@ -114,11 +111,20 @@ const RelatedProducts = ({ products, currentProductId }) => {
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toast = useToast();
+
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  // Get auth and cart state from Redux
+  const { isAuthenticated, cart } = useSelector((state) => state.auth);
+
+  // Check if product is already in cart
+  const isInCart = cart.some((item) => item.id === id);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -151,29 +157,72 @@ const ProductDetails = () => {
     window.scrollTo(0, 0);
   }, [id, navigate, toast]);
 
-  const handleAddToCart = () => {
-    // Implement cart functionality
-    toast({
-      title: 'Added to cart',
-      description: `${quantity} ${product.name} added to cart`,
-      status: 'success',
-      duration: 2000,
-    });
+  const handleAddToCart = async () => {
+    try {
+      if (!isAuthenticated) {
+        toast({
+          title: 'Please login',
+          description: 'You need to login to add items to cart',
+          status: 'warning',
+          duration: 2000,
+        });
+        // Save current URL to redirect back after login
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        navigate('/login');
+        return;
+      }
+
+      setIsAddingToCart(true);
+
+      dispatch(
+        addToCart({
+          id: product._id,
+          name: product.name,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          quantity: quantity,
+          stock: product.stock,
+          sku: product.sku,
+        })
+      );
+
+      toast({
+        title: 'Added to cart',
+        description: `${quantity} ${product.name} added to cart`,
+        status: 'success',
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to add item to cart',
+        status: 'error',
+        duration: 2000,
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleGoToCart = () => {
+    navigate('/cart');
   };
 
   if (isLoading) {
     return (
-      <Container maxW="container.xl" py={8}>
-        <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8}>
-          <Skeleton height="500px" />
-          <VStack align="stretch" spacing={4}>
-            <Skeleton height="40px" />
-            <Skeleton height="20px" />
-            <Skeleton height="20px" width="60%" />
-            <Skeleton height="100px" />
-          </VStack>
-        </Grid>
-      </Container>
+      <Layout>
+        <Container maxW="container.xl" py={8}>
+          <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8}>
+            <Skeleton height="500px" />
+            <VStack align="stretch" spacing={4}>
+              <Skeleton height="40px" />
+              <Skeleton height="20px" />
+              <Skeleton height="20px" width="60%" />
+              <Skeleton height="100px" />
+            </VStack>
+          </Grid>
+        </Container>
+      </Layout>
     );
   }
 
@@ -276,7 +325,7 @@ const ProductDetails = () => {
               {/* Quantity and Add to Cart */}
               <HStack spacing={4}>
                 <NumberInput
-                  defaultValue={1}
+                  value={quantity}
                   min={1}
                   max={product.stock}
                   onChange={(value) => setQuantity(parseInt(value))}
@@ -288,16 +337,32 @@ const ProductDetails = () => {
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <Button
-                  leftIcon={<FiShoppingCart />}
-                  colorScheme="blue"
-                  size="lg"
-                  onClick={handleAddToCart}
-                  isDisabled={!product.isActive || product.stock === 0}
-                  flex={1}
-                >
-                  Add to Cart
-                </Button>
+
+                {isInCart ? (
+                  <Button
+                    leftIcon={<FiShoppingCart />}
+                    colorScheme="green"
+                    size="lg"
+                    onClick={handleGoToCart}
+                    flex={1}
+                  >
+                    Go to Cart
+                  </Button>
+                ) : (
+                  <Button
+                    leftIcon={<FiShoppingCart />}
+                    colorScheme="blue"
+                    size="lg"
+                    onClick={handleAddToCart}
+                    isLoading={isAddingToCart}
+                    isDisabled={!product.isActive || product.stock === 0}
+                    loadingText="Adding to Cart"
+                    flex={1}
+                  >
+                    Add to Cart
+                  </Button>
+                )}
+
                 <IconButton
                   icon={<FiHeart />}
                   variant="outline"

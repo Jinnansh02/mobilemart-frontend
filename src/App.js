@@ -10,6 +10,7 @@ import ProductDashboard from './components/admin/ProductDashboard';
 import ProductsPage from './components/ProductsPage';
 import ProductDetails from './components/ProductDetails';
 import HomePage from './components/HomePage';
+import CartPage from './components/CartPage';
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
 
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/products',
     element: <ProductDashboard />,
+  },
+  {
+    path: '/cart',
+    element: <CartPage />,
   },
 ]);
 

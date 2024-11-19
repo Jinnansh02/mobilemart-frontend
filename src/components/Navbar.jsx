@@ -12,9 +12,11 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Badge,
+  Text,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import { UserCircle } from 'lucide-react';
+import { UserCircle, ShoppingCart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
@@ -36,6 +38,38 @@ const NavLink = (props) => {
       to={`/${children?.toLowerCase()}`}
     >
       {children}
+    </Box>
+  );
+};
+
+const CartIcon = () => {
+  const { cart } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  // Calculate total items in cart
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  return (
+    <Box position="relative" cursor="pointer" onClick={() => navigate('/cart')}>
+      <ShoppingCart size={20} />
+      {cartItemCount > 0 && (
+        <Badge
+          position="absolute"
+          top="-10px"
+          left="2px"
+          colorScheme="blue"
+          borderRadius="full"
+          minW="18px"
+          height="18px"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          fontSize="xs"
+          fontWeight="bold"
+        >
+          {cartItemCount}
+        </Badge>
+      )}
     </Box>
   );
 };
@@ -71,7 +105,17 @@ export default function Navbar() {
             ))}
           </HStack>
         </HStack>
-        <Flex alignItems={'center'}>
+        <Flex alignItems={'center'} gap={4}>
+          {/* Cart Icon */}
+          <Box
+            as={Button}
+            variant="ghost"
+            p={2}
+            _hover={{ bg: useColorModeValue('gray.200', 'gray.700') }}
+          >
+            <CartIcon />
+          </Box>
+
           {!isAuthenticated ? (
             <Button
               as={Link}
