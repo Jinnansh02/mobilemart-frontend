@@ -119,6 +119,8 @@ const ProductDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
 
   // Get auth and cart state from Redux
   const { isAuthenticated, cart } = useSelector((state) => state.auth);
@@ -130,12 +132,24 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         setIsLoading(true);
-        const response = await apiClient.get(`/api/products/${id}`);
-        setProduct(response.data.data);
+        const [productResponse, favoriteResponse] = await Promise.all([
+          apiClient.get(`/api/products/${id}`),
+          isAuthenticated
+            ? apiClient.get('/api/favorites')
+            : Promise.resolve({ data: { favorite: { products: [] } } }),
+        ]);
+
+        setProduct(productResponse.data.data);
+
+        // Check if product is in favorites
+        if (isAuthenticated) {
+          const favoriteProducts = favoriteResponse.data.favorite.products;
+          setIsFavorite(favoriteProducts.some((p) => p._id === id));
+        }
 
         // Fetch related products from same category
         const relatedResponse = await apiClient.get(
-          `/api/products?category=${response.data.data.category._id}&limit=10`
+          `/api/products?category=${productResponse.data.data.category._id}&limit=10`
         );
         setRelatedProducts(
           relatedResponse.data.data.filter((p) => p._id !== id)
@@ -147,7 +161,9 @@ const ProductDetails = () => {
           status: 'error',
           duration: 3000,
         });
-        navigate('/products');
+        // navigate('/products');
+        console.log(error?.message);
+        console.log(error);
       } finally {
         setIsLoading(false);
       }
@@ -155,7 +171,58 @@ const ProductDetails = () => {
 
     fetchProduct();
     window.scrollTo(0, 0);
-  }, [id, navigate, toast]);
+  }, [id, navigate, toast, isAuthenticated]);
+
+  const handleToggleFavorite = async () => {
+    try {
+      if (!isAuthenticated) {
+        toast({
+          title: 'Please login',
+          description: 'You need to login to manage favorites',
+          status: 'warning',
+          duration: 2000,
+        });
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        navigate('/login');
+        return;
+      }
+
+      setIsTogglingFavorite(true);
+
+      if (isFavorite) {
+        // Remove from favorites
+        await apiClient.delete(`/api/favorites/remove/${id}`);
+        toast({
+          title: 'Removed from favorites',
+          description: 'Product removed from your favorites',
+          status: 'success',
+          duration: 2000,
+        });
+      } else {
+        // Add to favorites
+        await apiClient.post('/api/favorites/add', { productId: id });
+        toast({
+          title: 'Added to favorites',
+          description: 'Product added to your favorites',
+          status: 'success',
+          duration: 2000,
+        });
+      }
+
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: `Failed to ${
+          isFavorite ? 'remove from' : 'add to'
+        } favorites`,
+        status: 'error',
+        duration: 2000,
+      });
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  };
 
   const handleAddToCart = async () => {
     try {
@@ -365,11 +432,27 @@ const ProductDetails = () => {
 
                 <IconButton
                   icon={<FiHeart />}
+                  variant={isFavorite ? 'solid' : 'outline'}
+                  colorScheme={isFavorite ? 'red' : 'blue'}
+                  size="lg"
+                  aria-label={
+                    isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                  }
+                  onClick={handleToggleFavorite}
+                  isLoading={isTogglingFavorite}
+                  _hover={{
+                    transform: 'scale(1.05)',
+                    transition: 'transform 0.2s',
+                  }}
+                />
+
+                {/* <IconButton
+                  icon={<FiHeart />}
                   variant="outline"
                   colorScheme="blue"
                   size="lg"
                   aria-label="Add to wishlist"
-                />
+                /> */}
               </HStack>
 
               {/* SKU */}

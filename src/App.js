@@ -14,6 +14,7 @@ import CartPage from './components/CartPage';
 import CheckoutPage from './components/CheckoutPage';
 import OrderSuccessPage from './components/OrderSuccess';
 import OrdersPage from './components/orders/OrdersPage';
+import FavoriteProducts from './components/FavoriteProducts';
 import AdminOrdersPage from './components/admin/adminOrders/AdminOrdersPage';
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/orders',
     element: <AdminOrdersPage />,
+  },
+  {
+    path: '/favorite-products',
+    element: <FavoriteProducts />,
   },
   {
     path: '/cart',

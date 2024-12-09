@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { store } from '../store/store';
 
-// const API_URL = 'https://mobilemart-backend-lp0r.onrender.com';
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://mobilemart-backend-lp0r.onrender.com';
+// const API_URL = 'http://localhost:8080';
 
 export const apiClient = axios.create({
   baseURL: API_URL,

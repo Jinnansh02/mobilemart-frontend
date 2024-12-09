@@ -145,6 +145,9 @@ export default function Navbar() {
                 <MenuItem as={Link} to="/orders">
                   My Orders
                 </MenuItem>
+                <MenuItem as={Link} to="/favorite-products">
+                  Favorite Products
+                </MenuItem>
                 <MenuDivider />
                 <MenuItem as={Link} to="/admin/categories">
                   Admin Dashboard
