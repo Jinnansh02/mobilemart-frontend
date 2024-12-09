@@ -51,11 +51,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
   const exitHoverColor = useColorModeValue('red.600', 'red.200');
 
   const navItems = [
-    { name: 'Dashboard', icon: FiBarChart2, path: '/admin' },
+    // { name: 'Dashboard', icon: FiBarChart2, path: '/admin' },
     { name: 'Products', icon: FiBox, path: '/admin/products' },
     { name: 'Categories', icon: FiTag, path: '/admin/categories' },
     { name: 'Orders', icon: FiShoppingCart, path: '/admin/orders' },
-    { name: 'Customers', icon: FiUsers, path: '/admin/customers' },
+    // { name: 'Customers', icon: FiUsers, path: '/admin/customers' },
   ];
 
   return (

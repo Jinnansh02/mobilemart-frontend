@@ -13,7 +13,8 @@ import HomePage from './components/HomePage';
 import CartPage from './components/CartPage';
 import CheckoutPage from './components/CheckoutPage';
 import OrderSuccessPage from './components/OrderSuccess';
-import OrdersPage from './components/OrdersPage';
+import OrdersPage from './components/orders/OrdersPage';
+import AdminOrdersPage from './components/admin/adminOrders/AdminOrdersPage';
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
 
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
     element: <ProductDashboard />,
   },
   {
+    path: '/admin/orders',
+    element: <AdminOrdersPage />,
+  },
+  {
     path: '/cart',
     element: <CartPage />,
   },
@@ -59,7 +64,7 @@ const router = createBrowserRouter([
     element: <CheckoutPage />,
   },
   {
-    path: '/order-success',
+    path: '/order-success/:orderId',
     element: <OrderSuccessPage />,
   },
   {
