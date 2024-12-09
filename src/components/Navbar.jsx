@@ -149,10 +149,14 @@ export default function Navbar() {
                   Favorite Products
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem as={Link} to="/admin/categories">
-                  Admin Dashboard
-                </MenuItem>
-                <MenuDivider />
+                {user?.role?.includes('admin') && (
+                  <>
+                    <MenuItem as={Link} to="/admin/categories">
+                      Admin Dashboard
+                    </MenuItem>
+                    <MenuDivider />
+                  </>
+                )}
                 <MenuItem onClick={handleLogout} color="red.500">
                   Logout
                 </MenuItem>
