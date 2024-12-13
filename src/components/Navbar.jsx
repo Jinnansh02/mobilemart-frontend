@@ -21,7 +21,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 
-const Links = ['Products', 'Contact-Us', 'About-Us'];
+const Links = ['Products', 'Favorite-Products'];
 
 const NavLink = (props) => {
   const { children } = props;
